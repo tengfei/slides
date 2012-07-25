@@ -122,7 +122,8 @@
 \begin{frame}
   \begin{itemize}
   \item Generalize genomic visualization frame work and approach.
-  \item Shed light on  development of genomic visualization on any platform.
+  \item Object-oriented visualization.
+  \item Shed light on development of genomic visualization on any platform.
   \item Make graphics flexible, extensible and elegant.
   \item Multivariate exploration.
   \item Allow user to plug-in their own graphics as tracks.
@@ -163,17 +164,18 @@
 \end{frame}
 
 % \section{Help}
+
+\section{Tutorial}
 \begin{frame}{Package release/development}
   \begin{itemize}
-  \item Bioconductor is the *ONLY* way to get packages for ggbio.
+  \item Bioconductor is the *ONLY* way to get released/devel version packages for ggbio.
   \item Github development is \alert{stopped} for developing ggbio.    
   \item Package attached vignettes are recommended.
   \item On-line documentation will be changed soon to document examples.
   \end{itemize}
 \end{frame}
 
-\section{Tutorial}
-\begin{frame}[fragile]{Version}
+\begin{frame}[fragile]{Update}
   \begin{itemize}
   \item R: >=2.15.0
   \item ggbio: >=1.5.10
@@ -200,10 +202,29 @@ source("~/.Rprofile")
   \end{block}
 \end{frame}
 
-\subsection{Case study I: chip-seq tracks.}
+\begin{frame}{How to get workshop code}
+  \begin{itemize}
+  \item https://github.com/tengfei/slides
+  \item Find main.R file under bioc2012/ggbio.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{How to get vignette and example code}
+  \begin{block}{}
+@ 
+<<open-vignette, eval = FALSE>>=
+help.start()
+## or 
+browseVignettes(package = "ggbio")
+@ %def 
+  \end{block}
+Down load pdf or copy R code.  
+\end{frame}
+
+\subsection{Case study I: Building ChIP-seq tracks.}
 \begin{frame}
   \begin{itemize}
-  \item Demo basically from tutorial for chip-seq data.    
+  \item Demo basically from tutorial for  seq data.    
   \item Goal:
     \begin{itemize}
     \item Overview of top 50 different binding peaks cross two samples.
@@ -287,21 +308,26 @@ head(pks)
 \end{frame}
 
 \begin{frame}[fragile]{Overview of the top 50 different binding peaks}
+  \begin{itemize}
+  \item layout\_karyogram: stack all the chromosome 
+  \item seqlength required.
+  \end{itemize}
   \begin{block}{}
 @ 
 <<overview, fig = TRUE, include = FALSE>>=
 pks <- pks[order(values(pks)$diffs, 
                  decreasing = TRUE)][1:50]
+library(ggbio)
 autoplot(pks, layout = "karyogram", 
          aes(color = diffs, fill = diffs))
 @ %def 
   \end{block}
   \begin{center}
-    \includegraphics[height = 0.6\textheight, width = 0.7\textwidth]{main-overview}
+    \includegraphics[height = 0.45\textheight, width = 0.7\textwidth]{main-overview}
   \end{center}
 \end{frame}
 
-\begin{frame}[fragile]{Define a region to dig down}
+\begin{frame}[fragile]{Define a region to dig into}
   \begin{itemize}
   \item Pick up a region of interests.
   \item That's a region which contains differencial peaks.
@@ -370,7 +396,7 @@ p.gene.c
 p.gene.r <- autoplot(txdb, which = wh, 
                      stat = "reduce")        
 library(grid)
-print(p.gene.r, vp = viewport(height = 0.15, width = 1))
+print(p.gene.r, vp = viewport(height = 0.3, width = 1))
 @ %def 
   \end{block}
 \begin{center}
@@ -591,7 +617,7 @@ p.cov
 @ %def 
 \end{block}
   \begin{center}
-\includegraphics[height = 0.5\textheight, width = 0.6\textwidth]{main-so-cov}    
+\includegraphics[height = 0.65\textheight, width = 0.65\textwidth]{main-so-cov}    
   \end{center}
 \end{frame}
 
@@ -606,7 +632,7 @@ autoplot(chipseq, color = "blue", fill = "red")
 @ %def 
   \end{block}
   \begin{center}
-\includegraphics[height = 0.5\textheight, width = 0.6\textwidth]{main-chipseq-arb}    
+\includegraphics[height = 0.65\textheight, width = 0.65\textwidth]{main-chipseq-arb}    
   \end{center}
 \end{frame}
 
@@ -622,7 +648,7 @@ autoplot(chipseq, aes(fill = strand))
 @ %def 
   \end{block}
   \begin{center}
-\includegraphics[height = 0.5\textheight, width = 0.6\textwidth]{main-chipseq-aes}    
+\includegraphics[height = 0.65\textheight, width = 0.65\textwidth]{main-chipseq-aes}    
   \end{center}
 \end{frame}
 
@@ -644,7 +670,7 @@ autoplot(chipseq, color = "black", aes(fill = strand),
 @ %def 
   \end{block}
   \begin{center}
-\includegraphics[height = 0.6\textheight]{main-prac-aes}    
+\includegraphics[height = 0.65\textheight, width = 0.65\textwidth]{main-prac-aes}    
   \end{center}
 \end{frame}
 
@@ -770,7 +796,7 @@ autoplot(seqinfo(obj)[paste0("chr", c(1:22, 'X'))])
 @ 
 <<ideogram, fig = TRUE, include = FALSE>>=
 library(biovizBase)
-## mm9 <- getIdeogram("mm9")
+mm9 <- getIdeogram("mm9")
 cyto.def <- getOption("biovizBase")$cytobandColor
 cyto.new <- c(cyto.def, c(gpos33 = "grey80", gpos66 = "grey60"))
 p.ideo <- plotIdeogram(mm9, "chr10", zoom = c(start(wh),end(wh)))  + 
