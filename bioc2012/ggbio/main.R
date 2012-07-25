@@ -15,7 +15,16 @@
 
 
 ###################################################
-### code chunk number 3: chip-sample
+### code chunk number 3: open-vignette (eval = FALSE)
+###################################################
+## help.start()
+## ## or 
+## browseVignettes(package = "ggbio")
+## ## browseVignettes may not work in AMI.
+
+
+###################################################
+### code chunk number 4: chip-sample
 ###################################################
 library(chipseq)
 data(cstest)
@@ -29,7 +38,7 @@ cov.gfp <- coverage(gfp.ext)
 
 
 ###################################################
-### code chunk number 4: peak-diff
+### code chunk number 5: peak-diff
 ###################################################
 peakCutoff(cov.ctcf, fdr = 0.0001)
 peaks.ctcf <- slice(cov.ctcf, lower = 8)
@@ -48,13 +57,13 @@ pks <- as(peakSummary, 'GRanges')
 
 
 ###################################################
-### code chunk number 5: gr
+### code chunk number 6: gr
 ###################################################
 head(pks)
 
 
 ###################################################
-### code chunk number 6: chip-seqnames
+### code chunk number 7: chip-seqnames
 ###################################################
 chrs <- unique(as.character(seqnames(pks)))
 library(GenomicRanges)
@@ -64,22 +73,23 @@ head(pks)
 
 
 ###################################################
-### code chunk number 7: overview
+### code chunk number 8: overview
 ###################################################
 pks <- pks[order(values(pks)$diffs, 
                  decreasing = TRUE)][1:50]
+library(ggbio)
 autoplot(pks, layout = "karyogram", 
          aes(color = diffs, fill = diffs))
 
 
 ###################################################
-### code chunk number 8: chip-gr
+### code chunk number 9: chip-gr
 ###################################################
 wh <- GRanges("chr11", IRanges(3062594, 3092593))
 
 
 ###################################################
-### code chunk number 9: gf-default
+### code chunk number 10: gf-default
 ###################################################
 library(TxDb.Mmusculus.UCSC.mm9.knownGene)
 txdb <- TxDb.Mmusculus.UCSC.mm9.knownGene
@@ -89,7 +99,7 @@ p.gene
 
 
 ###################################################
-### code chunk number 10: gf-chevron
+### code chunk number 11: gf-chevron
 ###################################################
 p.gene.c <- autoplot(txdb, which = wh, 
                      gap.geom = "chevron")        
@@ -97,16 +107,16 @@ p.gene.c
 
 
 ###################################################
-### code chunk number 11: gf-reduce
+### code chunk number 12: gf-reduce
 ###################################################
 p.gene.r <- autoplot(txdb, which = wh, 
                      stat = "reduce")        
 library(grid)
-print(p.gene.r, vp = viewport(height = 0.15, width = 1))
+print(p.gene.r, vp = viewport(height = 0.3, width = 1))
 
 
 ###################################################
-### code chunk number 12: gr-instance
+### code chunk number 13: gr-instance
 ###################################################
 ## shorter name
 cstest.s <- stack(cstest)
@@ -116,72 +126,64 @@ head(chipseq)
 
 
 ###################################################
-### code chunk number 13: default-chipseq
+### code chunk number 14: default-chipseq
 ###################################################
 autoplot(chipseq)
 
 
 ###################################################
-### code chunk number 14: chipseq-facets
-###################################################
-autoplot(chipseq, facets = strand ~ .)
-## equivalent to 
-## autoplot(gr, geom = "chevron") +  
-##              facet_grid(strand ~ seqnames)
-
-
-###################################################
-### code chunk number 15: prac-facets
+### code chunk number 15: chipseq-facets
 ###################################################
 autoplot(chipseq, facets = sample ~ .)
+## equivalent to 
+## autoplot(gr) +  facet_grid(sample ~ .)
 
 
 ###################################################
-### code chunk number 16: chipseq-cov
+### code chunk number 16: prac-facets
+###################################################
+autoplot(chipseq, facets = strand ~ .)
+
+
+###################################################
+### code chunk number 17: chipseq-arb
+###################################################
+autoplot(chipseq, color = "blue", fill = "red")
+
+
+###################################################
+### code chunk number 18: chipseq-aes
+###################################################
+autoplot(chipseq, aes(fill = strand))
+
+
+###################################################
+### code chunk number 19: chipseq-cov
 ###################################################
 autoplot(chipseq, stat = "coverage", 
          facets = sample ~ .)
 
 
 ###################################################
-### code chunk number 17: chipseq-cov-area
+### code chunk number 20: chipseq-cov-area
 ###################################################
 autoplot(chipseq, stat = "coverage", 
          geom = "area", facets = sample ~ .)
 
 
 ###################################################
-### code chunk number 18: geom-stat-gr
+### code chunk number 21: geom-stat-gr
 ###################################################
 ggbio:::.ggbio.geom
 ggbio:::.ggbio.stat
 
 
 ###################################################
-### code chunk number 19: so-cov
+### code chunk number 22: so-cov
 ###################################################
 p.cov <- autoplot(chipseq, stat = "coverage", 
                   facets = sample ~ ., geom = "area")
 p.cov
-
-
-###################################################
-### code chunk number 20: chipseq-arb
-###################################################
-autoplot(chipseq, color = "blue", fill = "red")
-
-
-###################################################
-### code chunk number 21: chipseq-aes
-###################################################
-autoplot(chipseq, aes(fill = strand))
-
-
-###################################################
-### code chunk number 22: prac-aes
-###################################################
-autoplot(chipseq, color = "black", aes(fill = strand), 
-         facets = sample ~.)
 
 
 ###################################################
@@ -203,7 +205,8 @@ tks
 ###################################################
 ### code chunk number 25: tracks-label
 ###################################################
-tks <- tks + coord_cartesian(xlim  = c(3.085e6, 3.09e6)) + theme_alignment()
+tks <- tks + coord_cartesian(xlim  = c(3.085e6, 3.09e6)) + 
+  theme_alignment()
 tks
 
 
@@ -211,10 +214,12 @@ tks
 ### code chunk number 26: own-data
 ###################################################
 simul <- seq(from = start(wh), to = end(wh), by = 1)
-df <- data.frame(x = simul, y = rnorm(length(simul)))
-p <- qplot(data = df, x = x, y = y, geom = "line")
-tracks("coverage" = p.cov, "gene" = p.gene, 
-       "user" = p, xlim = wh)
+df <- data.frame(x = simul, y = sin(simul/1000) +  log(simul) + rnorm(length(simul), mean = 0.2)) 
+p <- qplot(data = df, x = x, y = y, geom = "point", alpha = I(0.5)) + geom_smooth()
+tracks("coverage" = p.cov, 
+       "gene" = p.gene + ylab(""), 
+       "user" = p + scale_x_sequnit("mb"), 
+       xlim = wh)
 
 
 ###################################################
@@ -230,16 +235,10 @@ obj <- getIdeogram("hg19", cytoband = FALSE)
 
 
 ###################################################
-### code chunk number 28: seqinfo
-###################################################
-autoplot(seqinfo(obj)[paste0("chr", c(1:22, 'X'))])
-
-
-###################################################
-### code chunk number 29: ideogram
+### code chunk number 28: ideogram
 ###################################################
 library(biovizBase)
-## mm9 <- getIdeogram("mm9")
+mm9 <- getIdeogram("mm9")
 cyto.def <- getOption("biovizBase")$cytobandColor
 cyto.new <- c(cyto.def, c(gpos33 = "grey80", gpos66 = "grey60"))
 p.ideo <- plotIdeogram(mm9, "chr10", zoom = c(start(wh),end(wh)))  + 
@@ -248,7 +247,7 @@ print(p.ideo)
 
 
 ###################################################
-### code chunk number 30: tracks-ideo
+### code chunk number 29: tracks-ideo
 ###################################################
 tks <- tracks("ideogram" = p.ideo, "coverage" = p.cov, 
               "gene" = p.gene, 
@@ -259,7 +258,7 @@ tks
 
 
 ###################################################
-### code chunk number 31: processing
+### code chunk number 30: processing
 ###################################################
 crc1 <- system.file("extdata", "crc1-missense.csv", package = "biovizBase")
 crc1 <- read.csv(crc1)
@@ -288,7 +287,7 @@ mut.gr.new <- renameSeqlevels(mut.gr, new.names)
 
 
 ###################################################
-### code chunk number 32: ideo-track
+### code chunk number 31: ideo-track
 ###################################################
 hg19Ideo <- hg19Ideogram
 hg19Ideo <- keepSeqlevels(hg19Ideogram, chr.sub)
@@ -299,7 +298,7 @@ p
 
 
 ###################################################
-### code chunk number 33: circle-scale
+### code chunk number 32: circle-scale
 ###################################################
 p <- p + layout_circle(hg19Ideo, geom = "scale", 
               size = 2, radius = 35, trackWidth = 2)
@@ -307,7 +306,7 @@ p
 
 
 ###################################################
-### code chunk number 34: circle-text
+### code chunk number 33: circle-text
 ###################################################
 p <- p + layout_circle(hg19Ideo, geom = "text", 
                        aes(label = seqnames), vjust = 0,
@@ -316,7 +315,7 @@ p
 
 
 ###################################################
-### code chunk number 35: circle-mut
+### code chunk number 34: circle-mut
 ###################################################
 p <- p + layout_circle(mut.gr, geom = "rect", 
                        color = "steelblue",
@@ -325,7 +324,7 @@ p
 
 
 ###################################################
-### code chunk number 36: circle-link-process
+### code chunk number 35: circle-link-process
 ###################################################
 rearr  <- read.csv(system.file("extdata", 
                                "crc-rearrangment.csv", package = "biovizBase"))
@@ -359,7 +358,7 @@ gr.crc1 <- gr[values(gr)$individual == "CRC-1"]
 
 
 ###################################################
-### code chunk number 37: circle-point
+### code chunk number 36: circle-point
 ###################################################
 p <- p + layout_circle(gr.crc1, geom = "point", 
          aes(y = score, size = tumreads), color = "red",
@@ -369,7 +368,7 @@ p
 
 
 ###################################################
-### code chunk number 38: circle-link
+### code chunk number 37: circle-link
 ###################################################
 p <- p + layout_circle(gr.crc1, geom = "link", 
                        linked.to = "to.gr", 
