@@ -119,14 +119,12 @@
 
 \section{Introduction}
 \subsection{Motivation}
-\begin{frame}
+\begin{frame}{Motivation}
   \begin{itemize}
-  \item Generalize genomic visualization frame work and approach.
-  \item Object-oriented visualization.
-  \item Shed light on development of genomic visualization on any platform.
-  \item Make graphics flexible, extensible and elegant.
-  \item Multivariate exploration.
-  \item Allow user to plug-in their own graphics as tracks.
+  \item Explore the data in different ways more efficient, flexible.    
+  \item Generalize genomic visualization frame work and object-oriented visualization.
+  \item Elegant graphics for publications.
+  \item Modularize components to facilitate construction of high level graphics.
   \end{itemize}
 \end{frame}
 
@@ -159,7 +157,7 @@
 \frametitle{What can ggbio does?}  
 % a graphic goes here
 \begin{center}
-  \includegraphics[height = 0.8\textheight]{Figures/all.pdf}
+  \includegraphics[height = 0.8\textheight]{Figures/all.jpg}
 \end{center}
 \end{frame}
 
@@ -216,6 +214,7 @@ source("~/.Rprofile")
 help.start()
 ## or 
 browseVignettes(package = "ggbio")
+## browseVignettes may not work in AMI.
 @ %def 
   \end{block}
 Down load pdf or copy R code.  
@@ -329,8 +328,8 @@ autoplot(pks, layout = "karyogram",
 
 \begin{frame}[fragile]{Define a region to dig into}
   \begin{itemize}
-  \item Pick up a region of interests.
-  \item That's a region which contains differencial peaks.
+  \item Pick up a region of interest.
+  \item That's a region which contains differential peaks.
   \end{itemize}
   \begin{block}{}
 @ 
@@ -420,7 +419,7 @@ print(p.gene.r, vp = viewport(height = 0.3, width = 1))
 
 
 % % autoplot,GRanges as a star to learn how to use grammar
-\begin{frame}[fragile]{\Rclass{GRanges} object}
+\begin{frame}[fragile]{Get the example ChIP-seq data.}
   \scriptsize{
     \begin{block}{}
 @ 
@@ -435,7 +434,7 @@ head(chipseq)
   }      
 \end{frame}
 
-\begin{frame}[fragile]{default}  
+\begin{frame}[fragile]{Default geom for GRanges object}  
   \begin{block}{}
 @ 
 <<default-chipseq, fig = TRUE, include = FALSE>>=
@@ -449,22 +448,21 @@ autoplot(chipseq)
 
 \begin{frame}[fragile]{Understand GoG - Facets}  
   \begin{itemize}
-  \item Default is always faceted by chromosome names by column. \Rcode{.~seqnames}
+  \item Default is always faceted by chromosome names by column. \Rcode{.\~seqnames}
   \item You can facet the plots by other factors such as samples. \Rcode{sample
-      ~ seqnames}
+      \~ seqnames}
   \end{itemize}
   \begin{block}{}
 @ 
 <<chipseq-facets, fig = TRUE, include = FALSE>>=
-autoplot(chipseq, facets = strand ~ .)
+autoplot(chipseq, facets = sample ~ .)
 ## equivalent to 
-## autoplot(gr, geom = "chevron") +  
-##              facet_grid(strand ~ seqnames)
+## autoplot(gr) +  facet_grid(sample ~ .)
 @ %def 
   \end{block}
 \end{frame}
 
-\begin{frame}[fragile]{Facets by strand}
+\begin{frame}[fragile]{Facets by sample}
   \begin{center}
 \includegraphics[height = 0.8\textheight, width = 0.7\textwidth]{main-chipseq-facets}        
   \end{center}
@@ -473,7 +471,7 @@ autoplot(chipseq, facets = strand ~ .)
 \begin{frame}{Your turn}
 Task
 \begin{itemize}
-\item Faceted by samples and indicated as the row.
+\item Faceted by strand and indicated as the row.
 \end{itemize}
 \end{frame}
 
@@ -481,11 +479,42 @@ Task
   \begin{block}{}
 @ 
 <<prac-facets, fig = TRUE, include = FALSE>>=
-autoplot(chipseq, facets = sample ~ .)
+autoplot(chipseq, facets = strand ~ .)
 @ %def 
   \end{block}
   \begin{center}
 \includegraphics[height = 0.8\textheight, width = 0.9\textwidth]{main-prac-facets}    
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Understand GoG - Fixed aesthetics}  
+  \begin{itemize}
+  \item Fixed color/fill/size.., just passed in \autoplot{}.
+  \end{itemize}
+  \begin{block}{}
+@ 
+<<chipseq-arb, fig = TRUE, include = FALSE>>=
+autoplot(chipseq, color = "blue", fill = "red")
+@ %def 
+  \end{block}
+  \begin{center}
+\includegraphics[height = 0.65\textheight, width = 0.65\textwidth]{main-chipseq-arb}    
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Understand GoG - Aesthetics mapping}  
+  \begin{itemize}
+  \item To map variables into aesthetics, use function \Rfunction{aes()}.
+  \item Variable inside \Rfunction{aes()}, don't quote.
+  \end{itemize}
+  \begin{block}{}
+@ 
+<<chipseq-aes, fig = TRUE, include = FALSE>>=
+autoplot(chipseq, aes(fill = strand))
+@ %def 
+  \end{block}
+  \begin{center}
+\includegraphics[height = 0.65\textheight, width = 0.65\textwidth]{main-chipseq-aes}    
   \end{center}
 \end{frame}
 
@@ -509,6 +538,8 @@ autoplot(chipseq, stat = "coverage",
 \includegraphics[height = 0.55\textheight, width = 0.7\textwidth]{main-chipseq-cov}    
   \end{center}
 \end{frame}
+
+
 
 \begin{frame}[fragile]{Understand GoG - Geometric object(geom)}  
 \scriptsize{  
@@ -553,7 +584,7 @@ ggbio:::.ggbio.stat
   \end{itemize}
 \end{frame}
 
-\begin{frame}[allowframebreaks]{table}
+\begin{frame}[allowframebreaks]{Extended grammar of graphics table}
 % \begin{table}[h!t!b!p]
 \begin{center}
 \scriptsize{
@@ -606,8 +637,7 @@ Comp & name  & usage & icon\\\hline
 \end{center}
 \end{frame}
 
-
-\begin{frame}[fragile]{Solution}
+\begin{frame}[fragile]{Save the coverage plot}
 \begin{block}{}
 @ 
 <<so-cov, fig = TRUE, include = FALSE>>=
@@ -621,58 +651,7 @@ p.cov
   \end{center}
 \end{frame}
 
-\begin{frame}[fragile]{Understand GoG - Fixed aesthetics}  
-  \begin{itemize}
-  \item Fixed color/fill/size.., just passed in \autoplot{}.
-  \end{itemize}
-  \begin{block}{}
-@ 
-<<chipseq-arb, fig = TRUE, include = FALSE>>=
-autoplot(chipseq, color = "blue", fill = "red")
-@ %def 
-  \end{block}
-  \begin{center}
-\includegraphics[height = 0.65\textheight, width = 0.65\textwidth]{main-chipseq-arb}    
-  \end{center}
-\end{frame}
 
-\begin{frame}[fragile]{Understand GoG - Aesthetics mapping}  
-  \begin{itemize}
-  \item To map variables into aesthetics, use function \Rfunction{aes()}.
-  \item Variable inside \Rfunction{aes()}, don't quote.
-  \end{itemize}
-  \begin{block}{}
-@ 
-<<chipseq-aes, fig = TRUE, include = FALSE>>=
-autoplot(chipseq, aes(fill = strand))
-@ %def 
-  \end{block}
-  \begin{center}
-\includegraphics[height = 0.65\textheight, width = 0.65\textwidth]{main-chipseq-aes}    
-  \end{center}
-\end{frame}
-
-\begin{frame}{Your turn}
-  Task
-  \begin{itemize}
-  \item Faceted by samples
-  \item Set the border color of the rectangle to be 'black' and filled color
-    mapped to this new variable 'strand'.
-  \end{itemize}
-\end{frame}
-
-\begin{frame}[fragile]{Solution}
-  \begin{block}{}
-@ 
-<<prac-aes, fig = TRUE, include = FALSE>>=
-autoplot(chipseq, color = "black", aes(fill = strand), 
-         facets = sample ~.)
-@ %def 
-  \end{block}
-  \begin{center}
-\includegraphics[height = 0.65\textheight, width = 0.65\textwidth]{main-prac-aes}    
-  \end{center}
-\end{frame}
 
 \begin{frame}[fragile]{Additive ability}  
   \begin{itemize}
@@ -722,7 +701,8 @@ tks
   \begin{block}{}
 @ 
 <<tracks-label, fig = TRUE, include = FALSE>>=
-tks <- tks + coord_cartesian(xlim  = c(3.085e6, 3.09e6)) + theme_alignment()
+tks <- tks + coord_cartesian(xlim  = c(3.085e6, 3.09e6)) + 
+  theme_alignment()
 tks
 @ %def     
   \end{block}
@@ -739,10 +719,12 @@ tks
 @ 
 <<own-data, fig = TRUE, include = FALSE>>=
 simul <- seq(from = start(wh), to = end(wh), by = 1)
-df <- data.frame(x = simul, y = rnorm(length(simul)))
-p <- qplot(data = df, x = x, y = y, geom = "line")
-tracks("coverage" = p.cov, "gene" = p.gene, 
-       "user" = p, xlim = wh)
+df <- data.frame(x = simul, y = sin(simul/1000) +  log(simul) + rnorm(length(simul), mean = 0.2)) 
+p <- qplot(data = df, x = x, y = y, geom = "point", alpha = I(0.5)) + geom_smooth()
+tracks("coverage" = p.cov, 
+       "gene" = p.gene + ylab(""), 
+       "user" = p + scale_x_sequnit("mb"), 
+       xlim = wh)
 @ %def 
   \end{block}
 \end{frame}
@@ -771,17 +753,17 @@ obj <- getIdeogram("hg19", cytoband = FALSE)
   }
 \end{frame}
 
-\begin{frame}[fragile]{autoplot for Seqinfo}
-  \begin{block}{}
-@ 
-<<seqinfo, fig = TRUE, include = FALSE>>=
-autoplot(seqinfo(obj)[paste0("chr", c(1:22, 'X'))])
-@ %def 
-  \end{block}
-  \begin{center}
-    \includegraphics[height = 0.75\textheight]{main-seqinfo}
-  \end{center}
-\end{frame}
+% \begin{frame}[fragile]{autoplot for Seqinfo}
+%   \begin{block}{}
+% @ 
+% <<seqinfo, fig = TRUE, include = FALSE>>=
+% autoplot(seqinfo(obj)[paste0("chr", c(1:22, 'X'))])
+% @ %def 
+%   \end{block}
+%   \begin{center}
+%     \includegraphics[height = 0.75\textheight]{main-seqinfo}
+%   \end{center}
+% \end{frame}
 
 \begin{frame}{Your turn}
   Task
